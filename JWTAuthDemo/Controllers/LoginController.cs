@@ -13,9 +13,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace JWTAuthDemo.Controllers
 {
+
+    public class Test{
+            public string username { set; get; }
+           public string pass { set; get; }
+        }
+
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
@@ -25,15 +32,16 @@ namespace JWTAuthDemo.Controllers
         public LoginController(IConfiguration config)
         {
             _config = config;
-
         }
 
-        [HttpGet]
-        public IActionResult Login(string username, string pass)
+         
+        [HttpPost]
+        public IActionResult Login(Test test)
         {
-            UserModel login = new UserModel();
-            login.UserName = username;
-            login.Password = pass;
+           
+            UserModel login =   new UserModel();
+            login.UserName = test.username;
+            login.Password = test.pass;
             IActionResult response = Unauthorized();
 
 
@@ -101,6 +109,8 @@ namespace JWTAuthDemo.Controllers
             var userName = claim[0].Value;
             return $"Welcometo {userName}";
         }
+
+      
 
 
         [Authorize]

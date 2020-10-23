@@ -30,8 +30,11 @@ namespace JWTAuthDemo
         {
             services.AddCors(option =>
             {
-                option.AddPolicy("CorePolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
+                option.AddPolicy("CorePolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().Build());
+                option.AddPolicy("test", builder => builder.AllowCredentials().Build());
             });
+
+
             services.AddControllers();
 
 
@@ -46,7 +49,7 @@ namespace JWTAuthDemo
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = Configuration["Jwt:Issuer"],
                         ValidAudience = Configuration["Jwt:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Issuer"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
 
                     };
                 });
@@ -65,6 +68,8 @@ namespace JWTAuthDemo
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors("CorePolicy");
+            app.UseCors("test");
             app.UseAuthentication();
             app.UseAuthorization();
 
