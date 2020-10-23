@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using JWTAuthDemo.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -44,14 +45,14 @@ namespace JWTAuthDemo.Controllers
                 response = Ok(new { token = tokenStr });
             }
 
-
+            return response;
 
         }
 
         private UserModel AuthenticeteUser(UserModel login)
         {
             UserModel user = null;
-            if(login.UserName == "Moti" && login.Password == "1234")
+            if(login.UserName == "moti" && login.Password == "1234")
             {
 
                 user = new UserModel()
@@ -89,6 +90,24 @@ namespace JWTAuthDemo.Controllers
 
             var encodedtoken = new JwtSecurityTokenHandler().WriteToken(token);
             return encodedtoken;
+        }
+
+        [Authorize]
+        [HttpPost("Post")]
+        public string Post()
+        {
+            var indentity = HttpContext.User.Identity as ClaimsIdentity;
+            IList<Claim> claim = indentity.Claims.ToList();
+            var userName = claim[0].Value;
+            return $"Welcometo {userName}";
+        }
+
+
+        [Authorize]
+        [HttpGet("GetValue")]
+        public ActionResult<IEnumerable<string>> Get()
+        {
+            return new string[] { "Valuue1", "Value2", "Value3" };
         }
     }
 }
